@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Celebrity Game Room</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4c1d95;
+            --secondary-color: #5b21b6;
+            --success-color: #059669;
+            --background-start: #667eea;
+            --background-end: #764ba2;
+            --text-color: #2d3748;
+            --border-radius: 12px;
+            --container-padding: 2rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            background: linear-gradient(135deg, var(--background-start) 0%, var(--background-end) 100%);
+            padding: 1rem;
+        }
+
+        html {
+            height: -webkit-fill-available;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: var(--container-padding);
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .room-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+            font-size: clamp(1.5rem, 4vw, 2rem);
+        }
+
+        .room-code {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: calc(var(--border-radius) - 4px);
+            display: inline-block;
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            font-weight: 600;
+        }
+
+        #role-indicator {
+            color: var(--secondary-color);
+            font-weight: 600;
+            margin: 1rem 0;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+        }
+
+        .game-section {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 1rem;
+            border-radius: calc(var(--border-radius) - 4px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e2e8f0;
+            border-radius: calc(var(--border-radius) - 4px);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            -webkit-appearance: none;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        button {
+            width: 100%;
+            padding: 0.8rem;
+            border: none;
+            border-radius: calc(var(--border-radius) - 4px);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            background: var(--secondary-color);
+            color: white;
+            -webkit-appearance: none;
+            touch-action: manipulation;
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        button:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        #start-button {
+            background: var(--success-color);
+            margin-top: 1rem;
+        }
+
+        .status-message {
+            color: var(--success-color);
+            margin-top: 1rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        #game-started-message {
+            text-align: center;
+            font-size: clamp(1.2rem, 3.5vw, 1.5rem);
+            color: var(--primary-color);
+            margin-top: 2rem;
+        }
+
+        #celebrities-list {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: calc(var(--border-radius) - 4px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        @media (hover: hover) {
+            button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+        }
+
+        @media (max-width: 640px) {
+            :root {
+                --container-padding: 1rem;
+            }
+
+            .container {
+                margin: 0;
+            }
+
+            .game-section {
+                padding: 1rem;
+            }
+
+            button {
+                padding: 0.9rem;
+                font-size: 0.95rem;
+            }
+
+            input {
+                padding: 0.9rem;
+                font-size: 0.95rem;
+            }
+        }
+
+        @supports (-webkit-touch-callout: none) {
+            body {
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="room-header">
+            <h1>Celebrity Game</h1>
+            <span class="room-code" id="room-code">{{ room_code }}</span>
+            <div id="role-indicator"></div>
+        </div>
+
+        <div id="host-controls" class="host-only">
+            <div class="game-section">
+                <div class="stats">
+                    <div class="stat-item">
+                        <p>Players connected: <span id="player-count">0</span></p>
+                    </div>
+                    <div class="stat-item">
+                        <p>Submissions: <span id="submission-count">0</span></p>
+                    </div>
+                </div>
+                <div id="submission-form-host">
+                    <input type="text" id="celebrity-name" placeholder="Enter celebrity name">
+                    <button onclick="submitCelebrity()" id="submit-button">Submit Celebrity</button>
+                    <p id="submission-status-host" class="status-message" style="display: none;">
+                        Thanks for submitting your celebrity name!
+                    </p>
+                </div>
+                <button onclick="startGame()" id="start-button">Start Game</button>
+                <div id="celebrities-list" style="display: none;"></div>
+            </div>
+        </div>
+
+        <div id="player-input" class="guest-only">
+            <div class="game-section">
+                <div id="submission-form">
+                    <input type="text" id="celebrity-name-guest" placeholder="Enter celebrity name">
+                    <button onclick="submitCelebrity()" id="submit-button-guest">Submit Celebrity</button>
+                </div>
+                <div id="waiting-message" style="display: none;">
+                    <p class="status-message">Thanks for submitting your celebrity name!</p>
+                    <p>Waiting for the game to start...</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="game-started-message" style="display: none;">
+            Game has started, good luck!
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        // Prevent double-tap zoom on iOS
+        document.addEventListener('touchstart', function (event) {
+            if (event.touches.length > 1) {
+                event.preventDefault();
+            }
+        }, { passive: false });
+
+        const socket = io();
+        const roomCode = document.getElementById('room-code').textContent;
+        const isHost = "{{ 'true' if is_host else 'false' }}" === "true";
+        const MAX_SUBMISSIONS_PER_PLAYER = 1; // Can be changed later
+        let hasSubmitted = false;
+
+        // Show/hide elements based on role
+        document.querySelectorAll('.host-only').forEach(el => {
+            el.style.display = isHost ? 'block' : 'none';
+        });
+        document.querySelectorAll('.guest-only').forEach(el => {
+            el.style.display = isHost ? 'none' : 'block';
+        });
+
+        document.getElementById('role-indicator').textContent =
+            isHost ? 'You are the host' : 'You are a player';
+
+        socket.emit('join', {
+            room: roomCode,
+            is_host: isHost
+        });
+
+        socket.on('player_count', function (data) {
+            document.getElementById('player-count').textContent = data.count;
+        });
+
+        socket.on('submission_count', function (data) {
+            document.getElementById('submission-count').textContent = data.count;
+        });
+
+        socket.on('submission_confirmed', function () {
+            hasSubmitted = true;
+            if (isHost) {
+                document.getElementById('celebrity-name').value = '';
+                document.getElementById('celebrity-name').disabled = true;
+                document.getElementById('submit-button').disabled = true;
+                document.getElementById('submission-status-host').style.display = 'block';
+            } else {
+                document.getElementById('submission-form').style.display = 'none';
+                document.getElementById('waiting-message').style.display = 'block';
+            }
+        });
+
+        socket.on('game_started', function (data) {
+            if (isHost) {
+                const celebritiesList = document.getElementById('celebrities-list');
+                celebritiesList.innerHTML = data.celebrities.join('<br>');
+                celebritiesList.style.display = 'block';
+            } else {
+                // For guests, hide the input section and show the game started message
+                document.getElementById('player-input').style.display = 'none';
+                document.getElementById('game-started-message').style.display = 'block';
+            }
+        });
+
+        function submitCelebrity() {
+            if (hasSubmitted || !isValidSubmission()) return;
+
+            const celebrity = isHost
+                ? document.getElementById('celebrity-name').value.trim()
+                : document.getElementById('celebrity-name-guest').value.trim();
+
+            if (celebrity) {
+                socket.emit('submit_celebrity', {
+                    room: roomCode,
+                    celebrity: celebrity
+                });
+            }
+        }
+
+        function isValidSubmission() {
+            const inputElement = isHost
+                ? document.getElementById('celebrity-name')
+                : document.getElementById('celebrity-name-guest');
+            return !hasSubmitted && inputElement.value.trim();
+        }
+
+        function startGame() {
+            if (isHost) {
+                socket.emit('start_game', { room: roomCode });
+            }
+        }
+
+        // Add enter key support for submission
+        const inputElement = isHost
+            ? document.getElementById('celebrity-name')
+            : document.getElementById('celebrity-name-guest');
+
+        inputElement.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                submitCelebrity();
+            }
+        });
+    </script>
+</body>
+
+</html>

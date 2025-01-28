@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Celebrity Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4c1d95;
+            --secondary-color: #5b21b6;
+            --success-color: #059669;
+            --background-start: #667eea;
+            --background-end: #764ba2;
+            --text-color: #2d3748;
+            --border-radius: 12px;
+            --container-padding: 2rem;
+        }
+
+        @media (max-width: 480px) {
+            :root {
+                --container-padding: 1rem;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            /* iOS viewport fix */
+            background: linear-gradient(135deg, var(--background-start) 0%, var(--background-end) 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        html {
+            height: -webkit-fill-available;
+            /* iOS viewport fix */
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: var(--container-padding);
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            margin: 1rem;
+        }
+
+        h1 {
+            color: var(--text-color);
+            margin-bottom: 2rem;
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            font-weight: 600;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .join-section {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        input {
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: calc(var(--border-radius) - 4px);
+            font-size: 1rem;
+            width: 100%;
+            transition: border-color 0.2s;
+            -webkit-appearance: none;
+            /* iOS input styling fix */
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        button {
+            padding: 1rem;
+            border: none;
+            border-radius: calc(var(--border-radius) - 4px);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            -webkit-appearance: none;
+            /* iOS button styling fix */
+            touch-action: manipulation;
+            /* Better touch behavior */
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        .create-button {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .join-button {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        @media (hover: hover) {
+            button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 0.5rem;
+            }
+
+            button {
+                padding: 0.9rem;
+                font-size: 0.95rem;
+            }
+
+            input {
+                padding: 0.9rem;
+                font-size: 0.95rem;
+            }
+        }
+
+        /* Fix for iOS momentum scrolling */
+        @supports (-webkit-touch-callout: none) {
+            body {
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Celebrity Game</h1>
+        <div class="button-group">
+            <button onclick="createRoom()" class="create-button">Create Room</button>
+            <div class="join-section">
+                <input type="text" id="room-code-input" placeholder="Enter room code" maxlength="6"
+                    autocapitalize="characters">
+                <button onclick="joinRoom()" class="join-button">Join Room</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Prevent double-tap zoom on iOS
+        document.addEventListener('touchstart', function (event) {
+            if (event.touches.length > 1) {
+                event.preventDefault();
+            }
+        }, { passive: false });
+
+        function createRoom() {
+            fetch('/create-room')
+                .then(response => response.json())
+                .then(data => {
+                    window.location.href = `/join/${data.room_code}`;
+                });
+        }
+
+        function joinRoom() {
+            const roomCode = document.getElementById('room-code-input').value.trim().toUpperCase();
+            if (roomCode) {
+                window.location.href = `/join/${roomCode}`;
+            }
+        }
+
+        document.getElementById('room-code-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                joinRoom();
+            }
+        });
+    </script>
+</body>
+
+</html>
