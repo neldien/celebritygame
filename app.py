@@ -2,10 +2,11 @@ from flask import Flask, render_template, request, jsonify, session
 from flask_socketio import SocketIO, emit, join_room
 import random
 import string
+import os
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your-secret-key'  # Make sure this is a strong secret key in production
-socketio = SocketIO(app)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key')
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Store game rooms and their data
 rooms = {}
@@ -75,4 +76,5 @@ def on_start(data):
         emit('game_started', {'celebrities': rooms[room]['submissions']}, to=room)
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True, host='0.0.0.0', port=5001)
+    port = int(os.environ.get('PORT', 5000))
+    socketio.run(app, host='0.0.0.0', port=port)
