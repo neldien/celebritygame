@@ -102,6 +102,7 @@
             border-radius: calc(var(--border-radius) - 4px);
             font-size: 1rem;
             margin-bottom: 1rem;
+            appearance: none;
             -webkit-appearance: none;
         }
 
@@ -121,6 +122,7 @@
             transition: transform 0.2s, box-shadow 0.2s;
             background: var(--secondary-color);
             color: white;
+            appearance: none;
             -webkit-appearance: none;
             touch-action: manipulation;
         }
@@ -199,6 +201,15 @@
                 padding-bottom: env(safe-area-inset-bottom);
             }
         }
+
+        .secondary-button {
+            background: var(--secondary-color);
+            margin-top: 1rem;
+        }
+
+        .secondary-button:hover {
+            background: var(--primary-color);
+        }
     </style>
 </head>
 
@@ -229,6 +240,8 @@
                 </div>
                 <button onclick="startGame()" id="start-button">Start Game</button>
                 <div id="celebrities-list" style="display: none;"></div>
+                <button onclick="toggleCelebrities()" id="toggle-button" style="display: none;"
+                    class="secondary-button">Hide Names</button>
             </div>
         </div>
 
@@ -307,8 +320,8 @@
                 const celebritiesList = document.getElementById('celebrities-list');
                 celebritiesList.innerHTML = data.celebrities.join('<br>');
                 celebritiesList.style.display = 'block';
+                document.getElementById('toggle-button').style.display = 'block'; // Show toggle button
             } else {
-                // For guests, hide the input section and show the game started message
                 document.getElementById('player-input').style.display = 'none';
                 document.getElementById('game-started-message').style.display = 'block';
             }
@@ -352,6 +365,21 @@
                 submitCelebrity();
             }
         });
+
+        function toggleCelebrities() {
+            if (isHost) {
+                const celebritiesList = document.getElementById('celebrities-list');
+                const toggleButton = document.getElementById('toggle-button');
+
+                if (celebritiesList.style.display === 'none') {
+                    celebritiesList.style.display = 'block';
+                    toggleButton.textContent = 'Hide Names';
+                } else {
+                    celebritiesList.style.display = 'none';
+                    toggleButton.textContent = 'Show Names';
+                }
+            }
+        }
     </script>
 </body>
 
