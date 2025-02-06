@@ -1,8 +1,8 @@
-import eventlet
+import eventlet # type: ignore
 eventlet.monkey_patch()
 
-from flask import Flask, render_template, request, jsonify, session
-from flask_socketio import SocketIO, emit, join_room
+from flask import Flask, render_template, request, jsonify, session # type: ignore
+from flask_socketio import SocketIO, emit, join_room # type: ignore
 import random
 import string
 import os
