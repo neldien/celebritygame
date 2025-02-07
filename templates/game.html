@@ -253,7 +253,7 @@
                 </div>
                 <div id="waiting-message">
                     <p class="status-message" style="display: none;"></p>
-                    <p>Keep submitting names until the game starts!</p>
+                    <p>Submit one name per player!</p>
                     <p>Your submissions: <span id="personal-submission-count">0</span></p>
                 </div>
             </div>
@@ -309,7 +309,7 @@
             if (isHost) {
                 document.getElementById('celebrity-name').value = '';
                 document.getElementById('submission-status-host').style.display = 'block';
-                document.getElementById('submission-status-host').textContent = 
+                document.getElementById('submission-status-host').textContent =
                     `Thanks! You've submitted ${personalSubmissionCount} ${personalSubmissionCount === 1 ? 'celebrity' : 'celebrities'}!`;
                 setTimeout(() => {
                     document.getElementById('submission-status-host').style.display = 'none';
