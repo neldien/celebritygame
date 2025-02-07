@@ -251,9 +251,10 @@
                     <input type="text" id="celebrity-name-guest" placeholder="Enter celebrity name">
                     <button onclick="submitCelebrity()" id="submit-button-guest">Submit Celebrity</button>
                 </div>
-                <div id="waiting-message" style="display: none;">
-                    <p class="status-message">Thanks for submitting your celebrity name!</p>
-                    <p>Waiting for the game to start...</p>
+                <div id="waiting-message">
+                    <p class="status-message" style="display: none;"></p>
+                    <p>Keep submitting names until the game starts!</p>
+                    <p>Your submissions: <span id="personal-submission-count">0</span></p>
                 </div>
             </div>
         </div>
@@ -316,7 +317,9 @@
             } else {
                 document.getElementById('celebrity-name-guest').value = '';
                 const statusMessage = document.querySelector('#waiting-message .status-message');
-                statusMessage.textContent = `Thanks! You've submitted ${personalSubmissionCount} ${personalSubmissionCount === 1 ? 'celebrity' : 'celebrities'}!`;
+                const submissionCount = document.getElementById('personal-submission-count');
+                statusMessage.textContent = `Thanks! Celebrity name submitted!`;
+                submissionCount.textContent = personalSubmissionCount;
                 statusMessage.style.display = 'block';
                 setTimeout(() => {
                     statusMessage.style.display = 'none';
