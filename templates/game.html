@@ -302,16 +302,20 @@
             document.getElementById('submission-count').textContent = data.count;
         });
 
-        socket.on('submission_confirmed', function () {
-            hasSubmitted = true;
+        socket.on('submission_confirmed', function (data) {
             if (isHost) {
                 document.getElementById('celebrity-name').value = '';
-                document.getElementById('celebrity-name').disabled = true;
-                document.getElementById('submit-button').disabled = true;
                 document.getElementById('submission-status-host').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('submission-status-host').style.display = 'none';
+                }, 2000);
             } else {
-                document.getElementById('submission-form').style.display = 'none';
-                document.getElementById('waiting-message').style.display = 'block';
+                document.getElementById('celebrity-name-guest').value = '';
+                const statusMessage = document.querySelector('#waiting-message .status-message');
+                statusMessage.style.display = 'block';
+                setTimeout(() => {
+                    statusMessage.style.display = 'none';
+                }, 2000);
             }
         });
 
@@ -346,7 +350,7 @@
             const inputElement = isHost
                 ? document.getElementById('celebrity-name')
                 : document.getElementById('celebrity-name-guest');
-            return !hasSubmitted && inputElement.value.trim();
+            return inputElement.value.trim();
         }
 
         function startGame() {

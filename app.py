@@ -64,12 +64,11 @@ def on_join(data):
 def on_submit(data):
     room = data['room']
     celebrity = data['celebrity']
-    if room in rooms and request.sid not in rooms[room]['submitted_players']:
+    if room in rooms:
         rooms[room]['submissions'].append(celebrity)
-        rooms[room]['submitted_players'].add(request.sid)  # Mark this player as submitted
         emit('submission_count', {'count': len(rooms[room]['submissions'])}, to=room)
         # Send personal confirmation to the submitting player
-        emit('submission_confirmed')
+        emit('submission_confirmed', {'can_submit_more': True})
 
 @socketio.on('start_game')
 def on_start(data):
