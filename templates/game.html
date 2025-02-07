@@ -302,16 +302,21 @@
             document.getElementById('submission-count').textContent = data.count;
         });
 
+        let personalSubmissionCount = 0;
         socket.on('submission_confirmed', function (data) {
+            personalSubmissionCount++;
             if (isHost) {
                 document.getElementById('celebrity-name').value = '';
                 document.getElementById('submission-status-host').style.display = 'block';
+                document.getElementById('submission-status-host').textContent = 
+                    `Thanks! You've submitted ${personalSubmissionCount} ${personalSubmissionCount === 1 ? 'celebrity' : 'celebrities'}!`;
                 setTimeout(() => {
                     document.getElementById('submission-status-host').style.display = 'none';
                 }, 2000);
             } else {
                 document.getElementById('celebrity-name-guest').value = '';
                 const statusMessage = document.querySelector('#waiting-message .status-message');
+                statusMessage.textContent = `Thanks! You've submitted ${personalSubmissionCount} ${personalSubmissionCount === 1 ? 'celebrity' : 'celebrities'}!`;
                 statusMessage.style.display = 'block';
                 setTimeout(() => {
                     statusMessage.style.display = 'none';
