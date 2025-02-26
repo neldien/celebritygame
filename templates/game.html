@@ -242,6 +242,8 @@
                 <div id="celebrities-list" style="display: none;"></div>
                 <button onclick="toggleCelebrities()" id="toggle-button" style="display: none;"
                     class="secondary-button">Hide Names</button>
+                <button onclick="resetRoom()" id="reset-button" class="secondary-button"
+                    style="margin-top: 1rem; background-color: #e53e3e;">Reset Room</button>
             </div>
         </div>
 
@@ -278,6 +280,7 @@
         const isHost = "{{ 'true' if is_host else 'false' }}" === "true";
         const MAX_SUBMISSIONS_PER_PLAYER = 1; // Can be changed later
         let hasSubmitted = false;
+        let gameStarted = false;
 
         // Show/hide elements based on role
         document.querySelectorAll('.host-only').forEach(el => {
@@ -328,14 +331,49 @@
         });
 
         socket.on('game_started', function (data) {
+            gameStarted = true;
             if (isHost) {
                 const celebritiesList = document.getElementById('celebrities-list');
-                celebritiesList.innerHTML = data.celebrities.join('<br>');
+                // Store the original list in a data attribute
+                celebritiesList.dataset.celebrities = JSON.stringify(data.celebrities);
+
+                // Randomize the celebrities list before showing initially
+                const shuffledCelebrities = [...data.celebrities].sort(() => Math.random() - 0.5);
+                celebritiesList.innerHTML = shuffledCelebrities.join('<br>');
+
                 celebritiesList.style.display = 'block';
                 document.getElementById('toggle-button').style.display = 'block'; // Show toggle button
             } else {
                 document.getElementById('player-input').style.display = 'none';
                 document.getElementById('game-started-message').style.display = 'block';
+            }
+        });
+
+        // Add new event handler for room reset
+        socket.on('room_reset', function () {
+            gameStarted = false;
+            personalSubmissionCount = 0;
+
+            // Reset submission counts
+            document.getElementById('submission-count').textContent = '0';
+
+            if (isHost) {
+                // Hide celebrities list and toggle button
+                document.getElementById('celebrities-list').style.display = 'none';
+                document.getElementById('toggle-button').style.display = 'none';
+
+                // Clear any existing celebrity names
+                document.getElementById('celebrity-name').value = '';
+                document.getElementById('submission-status-host').style.display = 'none';
+            } else {
+                // Show submission form again for guests
+                document.getElementById('player-input').style.display = 'block';
+                document.getElementById('game-started-message').style.display = 'none';
+
+                // Reset guest form
+                document.getElementById('celebrity-name-guest').value = '';
+                document.querySelector('#waiting-message .status-message').style.display = 'none';
+                document.getElementById('personal-submission-count').textContent = '0';
             }
         });
 
@@ -367,6 +405,15 @@
             }
         }
 
+        // Add reset room function
+        function resetRoom() {
+            if (isHost) {
+                if (confirm('Are you sure you want to reset the room? This will clear all submissions.')) {
+                    socket.emit('reset_room', { room: roomCode });
+                }
+            }
+        }
+
         // Add enter key support for submission
         const inputElement = isHost
             ? document.getElementById('celebrity-name')
@@ -384,6 +431,12 @@
                 const toggleButton = document.getElementById('toggle-button');
 
                 if (celebritiesList.style.display === 'none') {
+                    // Randomize again when showing
+                    if (celebritiesList.dataset.celebrities) {
+                        const celebrities = JSON.parse(celebritiesList.dataset.celebrities);
+                        const shuffledCelebrities = [...celebrities].sort(() => Math.random() - 0.5);
+                        celebritiesList.innerHTML = shuffledCelebrities.join('<br>');
+                    }
                     celebritiesList.style.display = 'block';
                     toggleButton.textContent = 'Hide Names';
                 } else {

@@ -77,6 +77,21 @@ def on_start(data):
         rooms[room]['started'] = True
         emit('game_started', {'celebrities': rooms[room]['submissions']}, to=room)
 
+@socketio.on('reset_room')
+def on_reset(data):
+    room = data['room']
+    if room in rooms:
+        # Reset room data but keep players connected
+        rooms[room]['submissions'] = []
+        rooms[room]['started'] = False
+        rooms[room]['submitted_players'] = set()
+        
+        # Notify all clients in the room about the reset
+        emit('room_reset', {}, to=room)
+        
+        # Update submission count
+        emit('submission_count', {'count': 0}, to=room)
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     socketio.run(app, host='0.0.0.0', port=port)
