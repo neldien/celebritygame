@@ -165,6 +165,28 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
+        .instructions {
+            background: #f0f9ff;
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0 calc(var(--border-radius) - 4px) calc(var(--border-radius) - 4px) 0;
+        }
+
+        .instructions h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .instructions ul {
+            padding-left: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .instructions li {
+            margin-bottom: 0.5rem;
+        }
+
         @media (hover: hover) {
             button:hover {
                 transform: translateY(-2px);
@@ -222,6 +244,20 @@
         </div>
 
         <div id="host-controls" class="host-only">
+            <div class="instructions">
+                <h3>Host Instructions</h3>
+                <p>As the host, you'll guide the game:</p>
+                <ul>
+                    <li>Wait for all players to submit their celebrity names</li>
+                    <li>Submit your own celebrity name(s)</li>
+                    <li>When everyone is ready, click "Start Game"</li>
+                    <li>Read all the celebrity names out loud ONCE (and only once!)</li>
+                    <li>After reading, click "Hide Names" and participate as a player</li>
+                    <li>Players take turns guessing which celebrity belongs to which player</li>
+                    <li>If a player guesses correctly, the named player joins their team and they get another guess</li>
+                </ul>
+            </div>
+
             <div class="game-section">
                 <div class="stats">
                     <div class="stat-item">
@@ -248,6 +284,19 @@
         </div>
 
         <div id="player-input" class="guest-only">
+            <div class="instructions">
+                <h3>Player Instructions</h3>
+                <p>Welcome to the Celebrity Game!</p>
+                <ul>
+                    <li>Submit the name of a celebrity below</li>
+                    <li>Wait for the host to start the game</li>
+                    <li>Listen carefully as the host reads all celebrity names ONCE</li>
+                    <li>When it's your turn, try to guess which celebrity belongs to which player</li>
+                    <li>If you guess correctly, that player joins your team and you get another guess</li>
+                    <li>The goal is to collect as many players on your team as possible</li>
+                </ul>
+            </div>
+
             <div class="game-section">
                 <div id="submission-form">
                     <input type="text" id="celebrity-name-guest" placeholder="Enter celebrity name">
@@ -262,7 +311,18 @@
         </div>
 
         <div id="game-started-message" style="display: none;">
-            Game has started, good luck!
+            <p>Game has started, good luck!</p>
+            <div class="instructions" style="margin-top: 1rem;">
+                <h3>How to Play</h3>
+                <ul>
+                    <li>Remember the celebrity names that were read</li>
+                    <li>Take turns guessing which player submitted which celebrity</li>
+                    <li>If you guess correctly, that player joins your team and you get another guess</li>
+                    <li>If you guess incorrectly, the next player takes their turn</li>
+                    <li>The game ends when all celebrities have been correctly guessed</li>
+                    <li>The player with the most team members wins!</li>
+                </ul>
+            </div>
         </div>
     </div>
 
